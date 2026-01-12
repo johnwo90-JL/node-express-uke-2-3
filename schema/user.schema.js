@@ -1,8 +1,8 @@
-const z = require("zod");
-const { v4: uuid } = require("uuid");
+import z from "zod";
+import * as uuid from "uuid";
 
 const UserSchemaBase = z.object({
-    id: z.uuidv4().default(uuid()),
+    id: z.uuidv4().default(uuid.v4()),
     email: z.email(),
     password: z.string(),
     role: z.enum(["user", "admin"]).default("user"),
@@ -20,7 +20,7 @@ const UserSchemaUpdate = UserSchemaBase.omit({
 }).partial().strict();
 
 
-module.exports = {
+export {
     UserSchemaCreate,
     UserSchemaUpdate
 }

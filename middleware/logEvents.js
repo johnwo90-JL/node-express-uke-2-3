@@ -1,24 +1,22 @@
 //imports
-const {format} = require("date-fns");
-const {v4 : uuid} = require("uuid");
-const fs = require("fs");
-const path = require("path");
-const fsPromises = require("fs").promises;
+import * as uuid from "uuid";
+import * as datefns from "date-fns";
+import fs from "node:fs";
 
 //Creates a log if it doesn't exist, and fills it with id, date, and message
 const logEvents = async(message, logName) =>
 {
-    const dateTime = `${format(new Date(), "ddMMyyyy\tHH:mm:ss")}`;
-    const theLog = `${uuid()}\t${dateTime}\t${message}\n`;
+    const dateTime = `${datefns.format(new Date(), "ddMMyyyy\tHH:mm:ss")}`;
+    const theLog = `${uuid.v4()}\t${dateTime}\t${message}\n`;
     console.log(theLog);
     
     try
     {
-        if(!fs.existsSync(path.join(__dirname, "..", "logs")))
+        if(!fs.existsSync(path.join(process.cwd(), "logs")))
         {
-            await fsPromises.mkdir(path.join(__dirname, "..", "logs"));
+            await fs.promises.mkdir(join(process.cwd(), "logs"));
         }
-        await fsPromises.appendFile(path.join(__dirname, "..", "logs", logName), theLog)
+        await fs.promises.appendFile(join(process.cwd(),  "logs", logName), theLog)
     }
     catch(err)
     {
@@ -33,4 +31,4 @@ const logger = (req, res, next) =>
     next();
 }
 
-module.exports = {logEvents, logger};
+export { logEvents, logger };

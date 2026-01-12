@@ -1,8 +1,7 @@
-const { Router } = require("express");
-const { getUsers, createUser, deleteUser, updateUser } = require("../controllers/users.controller");
-const { ZodError } = require("zod");
+import express from "express";
+import * as userController from "../controllers/users.controller.js";
 
-const userRouter = new Router();
+const userRouter = new express.Router();
 
 userRouter.get("/", (req, res) => {
     const users = getUsers();
@@ -13,7 +12,7 @@ userRouter.get("/", (req, res) => {
 userRouter.post("/", (req, res) => {
     const { body } = req;
 
-    const result = createUser(body);
+    const result = userController.createUser(body);
 
     res.json(result);
 });
@@ -22,7 +21,7 @@ userRouter.patch("/:id", (req, res) => {
     const { id } = req.params; 
     const { body } = req;
 
-    const result = updateUser(id, body);
+    const result = userController.updateUser(id, body);
 
     res.json(result);
 });
@@ -30,7 +29,7 @@ userRouter.patch("/:id", (req, res) => {
 userRouter.delete("/:id", (req, res) => {
     const { id } = req.params;
 
-    deleteUser(id);
+    userController.deleteUser(id);
 
     res.sendStatus(204);
 });
@@ -55,4 +54,4 @@ userRouter.use((err, req, res, next) => {
     res.status(err.cause).json({ success: false, error: err.message });
 })
 
-module.exports = { userRouter };
+export { userRouter };

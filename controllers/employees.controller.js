@@ -1,5 +1,5 @@
-const { readJsonDB, writeJsonDB } = require("../util");
-const { v4: uuid } = require("uuid");
+import { readJsonDB, writeJsonDB } from "../util";
+import * as uuid from "uuid";
 
 
 // Hent ut alle ansatte fra DB (JSON)
@@ -109,7 +109,7 @@ function deleteEmployee(id) {
 }
 
 
-module.exports = {
+export default {
     getEmployees,
     getEmployeeById,
     createEmployee,

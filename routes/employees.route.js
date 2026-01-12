@@ -1,11 +1,11 @@
-const { Router } = require("express");
-const { getEmployees, getEmployeeById, createEmployee, deleteEmployee, updateEmployee, upsertEmployee } = require("../controllers/employees.controller");
+import express from "express";
+import employeeController from "../controllers/employees.controller";
 
-const employeesRouter = new Router();
+const employeesRouter = new express.Router();
 
 // Liste over ansatte
 employeesRouter.get("/", (_, res) => {
-    const employees = getEmployees();
+    const employees = employeeController.getEmployees();
 
     res.json(employees);
 });
@@ -14,7 +14,7 @@ employeesRouter.get("/", (_, res) => {
 // Hent én spesifikk ansatt
 employeesRouter.get("/:id", (req, res) => {
     const { id } = req.params;
-    const employee = getEmployeeById(id);
+    const employee = employeeController.getEmployeeById(id);
 
     res.json(employee);
 });
@@ -23,7 +23,7 @@ employeesRouter.get("/:id", (req, res) => {
 // Opprette ny ansatt, uten spesifisert id
 employeesRouter.post("/", (req, res) => {
     const body = req.body;
-    const result = createEmployee(body);
+    const result = employeeController.createEmployee(body);
 
     res.status(201).json(result); // 201 -> Created
 });
@@ -34,7 +34,7 @@ employeesRouter.patch("/:id",  (req, res) => {
     const { id } = req.params;
     const { body } = req;
     
-    const result = updateEmployee(id, body);
+    const result = employeeController.updateEmployee(id, body);
 
     res.status(200).json(result);
 });
@@ -46,7 +46,7 @@ employeesRouter.put("/:id",  (req, res) => {
     const { id } = req.params;
     const { body } = req;
 
-    const result = upsertEmployee(id, body);
+    const result = employeeController.upsertEmployee(id, body);
     const statusCode = result.status;
     delete result.status;
 
@@ -57,7 +57,7 @@ employeesRouter.put("/:id",  (req, res) => {
 // Sletter en ansatt
 employeesRouter.delete("/:id", (req, res) => {
     const { id } = req.params;
-    const result = deleteEmployee(id);
+    const result = employeeController.deleteEmployee(id);
 
     const statusCode = result.status;
 
@@ -73,7 +73,7 @@ employeesRouter.use((err, req, res, next) => {
     }
 
     res.status(err.cause).json({ success: false, error: err });
-})
+});
 
-module.exports.employeesRouter = employeesRouter;
+export { employeesRouter };
 

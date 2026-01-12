@@ -1,6 +1,5 @@
-const { UserSchemaCreate, UserSchemaUpdate } = require("../schema/user.schema");
-const { readJsonDB, writeJsonDB } = require("../util");
-const { v4: uuid } = require("uuid");
+import { UserSchemaCreate, UserSchemaUpdate } from "../schema/user.schema";
+import { readJsonDB, writeJsonDB } from "../util";
 
 
 // Hent ut alle ansatte fra DB (JSON)
@@ -93,7 +92,7 @@ function userExists(email) {
 }
 
 
-module.exports = {
+export {
     getUsers,
     getUserById,
     createUser,

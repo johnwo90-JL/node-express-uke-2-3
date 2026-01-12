@@ -1,25 +1,25 @@
 //imports
 //third party imports
-const path = require("path");
-const express = require("express");
-const populateRoutes = require("./routes").populateRoutes;
+import express from "express";
+import path from "node:path";
+import { populateRoutes } from "./routes/index.js";
 
-const { configureCors } = require("./cors.config");
+import { configureApp } from "./config.js";
 
 const app = express();
 
 //Port definition
 const PORT = process.env.PORT || 3500;
 
-// Configure CORS
-configureCors(app);
+// Configure app
+configureApp(app);
 
 // Set up routes
 populateRoutes(app);
 
 // ...catch-all => 404
 app.use((req, res) => {
-    res.status(404).sendFile(path.join(__dirname, "view", "404.html"));
+    res.status(404).sendFile(path.join(process.cwd(), "view", "404.html"));
 });
 
 

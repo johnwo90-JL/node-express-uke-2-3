@@ -1,6 +1,6 @@
 
-const fs = require("fs");
-const path = require("path");
+import fs from "node:fs";
+import path from "node:path";
 
 
 /**
@@ -8,8 +8,8 @@ const path = require("path");
  * @param {string} dbName 
  * @returns {object}
  */
-module.exports.readJsonDB = (dbName) => {
-    const filePath = path.join(__dirname, "data", `${dbName}.db.json`);
+export function readJsonDB(dbName) {
+    const filePath = path.join(process.cwd(), "data", `${dbName}.db.json`);
     
     if (!fs.existsSync(filePath)) {
         throw new Error(`File ${dbName} does not exist in "./data"!`);
@@ -19,19 +19,19 @@ module.exports.readJsonDB = (dbName) => {
     const obj = JSON.parse(buffer.toString("utf8"));
 
     return obj;
-};
+}
 
 /**
  * Converts and writes an object as a JSON-file.
  * @param {string} dbName 
  * @param {string} data
  */
-module.exports.writeJsonDB = (dbName, data) => {
-    const filePath = path.join(__dirname, "data", `${dbName}.db.json`);
+export function writeJsonDB(dbName, data) {
+    const filePath = path.join(process.cwd(), "data", `${dbName}.db.json`);
     
     if (!fs.existsSync(filePath)) {
         throw new Error(`File ${dbName} does not exist in "./data"!`);
     }
 
     fs.writeFileSync(filePath, JSON.stringify(data, null, 4) , { encoding: "utf8" });
-};
+}

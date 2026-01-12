@@ -1,6 +1,6 @@
 import express from "express";
-import { logger } from "./middleware/logEvents";
-import { join } from "path";
+import { logger } from "./middleware/logEvents.js";
+import path from "node:path";
 import cors from "cors";
 
 
@@ -16,11 +16,12 @@ const corsOptions = {
 }
 
 function configureApp(app) {
-    app.use(urlencoded({extended:false}));
-    app.use(json());
-    app.use(express.static(join(__dirname, "/public")));
-    app.use(logger);
+    app.use(express.urlencoded({extended:false}));
+    app.use(express.json());
+    console.log(path.dirname("/"))
+    app.use(express.static(path.join(process.cwd(), "/public")));
     app.use(cors(corsOptions));
+    app.use(logger);
 
     // app.use(function (feil, req, res, next)
     // {

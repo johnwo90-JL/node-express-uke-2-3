@@ -1,9 +1,13 @@
 console.log("Initializing routes...");
 
+import { rootRouter } from "./root.route.js";
+import { userRouter } from "./user.route.js";
+import { employeesRouter } from "./employees.route.js";
+
 const routes = {
-    employees: require("./employees.route").employeesRouter,
-    root: require("./root.route").rootRouter,
-    users: require("./user.route").userRouter
+    root: rootRouter,
+    users: userRouter,
+    employees: employeesRouter,
 }
 
 function populateRoutes(app) {
@@ -20,5 +24,7 @@ function populateRoutes(app) {
 
 console.log("Routes initialized!");
 
-module.exports.routes = routes;
-module.exports.populateRoutes = populateRoutes;
+export { 
+    routes,
+    populateRoutes,
+}

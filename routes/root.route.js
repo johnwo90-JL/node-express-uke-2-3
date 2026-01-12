@@ -1,20 +1,20 @@
-const { Router } = require("express");
-const path = require("path");
+import express from "express";
+import path from "node:path";
 
 
 
-const rootRouter = new Router();
+const rootRouter = new express.Router();
 
 rootRouter.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "..", "view", "index.html"))
+    res.sendFile(path.join(process.cwd(), "view", "index.html"))
 });
 
 rootRouter.get("/new-page.html", (req, res) => {
-    res.sendFile(path.join(__dirname, "..", "view", "new-page.html"))
+    res.sendFile(path.join(process.cwd(), "view", "new-page.html"))
 });
 
 rootRouter.get("/old-page.html", (req, res) => {
     res.redirect(301, "/new-page.html")
 });
 
-module.exports = { rootRouter };
+export { rootRouter };
