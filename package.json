@@ -1,10 +1,10 @@
 {
-  "name": "xmas",
+  "name": "node-express-restful-server",
   "version": "1.0.0",
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "node --import=extensionless/register server",
+    "start": "node --import=extensionless/register server.js",
     "dev": "nodemon --exec \"node --import=extensionless/register\" server.js"
   },
   "author": "",
