@@ -1,0 +1,34 @@
+[
+    {
+        "id": "81d179c0-a284-4e0c-8697-1a771e0f3bb9",
+        "email": "navn.navnesen.2@user.com",
+        "password": "abc123",
+        "role": "user",
+        "lastLoggedIn": null
+    },
+    {
+        "id": "a6bd0e87-98dc-4c53-a58c-75bb6b869090",
+        "email": "navn.navnesen.4@user.com",
+        "password": "abc123",
+        "role": "user",
+        "lastLoggedIn": null
+    },
+    {
+        "id": "99cd4ec1-bf8d-456f-8155-ac007453d93b",
+        "email": "navn.navnesen.5@user.com",
+        "password": "Foobar12",
+        "role": "user"
+    },
+    {
+        "id": "fdd199a5-b0dc-4a84-8d00-ce975900db4a",
+        "email": "navn.navnesen.6@user.com",
+        "password": "Foobar12",
+        "role": "user"
+    },
+    {
+        "id": "1e79090c-90f0-4992-a5d6-cfc83facce8f",
+        "email": "navn.navnesen.7@user.com",
+        "password": "Foobar12",
+        "role": "user"
+    }
+]

@@ -3,6 +3,7 @@ console.log("Initializing routes...");
 const routes = {
     employees: require("./employees.route").employeesRouter,
     root: require("./root.route").rootRouter,
+    users: require("./user.route").userRouter
 }
 
 function populateRoutes(app) {

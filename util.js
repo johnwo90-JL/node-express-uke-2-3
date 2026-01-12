@@ -33,5 +33,5 @@ module.exports.writeJsonDB = (dbName, data) => {
         throw new Error(`File ${dbName} does not exist in "./data"!`);
     }
 
-    fs.writeFileSync(filePath, data, { encoding: "utf8" });
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 4) , { encoding: "utf8" });
 };
