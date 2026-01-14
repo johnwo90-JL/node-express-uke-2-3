@@ -2,11 +2,13 @@ console.log("Initializing routes...");
 
 import { rootRouter } from "./root.route.js";
 import { userRouter } from "./user.route.js";
+import { authRouter } from "./auth.route.js";
 import { employeesRouter } from "./employees.route.js";
 
 const routes = {
     root: rootRouter,
     users: userRouter,
+    auth: authRouter,
     employees: employeesRouter,
 }
 

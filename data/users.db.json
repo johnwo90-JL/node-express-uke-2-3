@@ -1,34 +1,14 @@
 [
     {
-        "id": "81d179c0-a284-4e0c-8697-1a771e0f3bb9",
-        "email": "navn.navnesen.2@user.com",
-        "password": "abc123",
-        "role": "user",
-        "lastLoggedIn": null
-    },
-    {
-        "id": "a6bd0e87-98dc-4c53-a58c-75bb6b869090",
-        "email": "navn.navnesen.4@user.com",
-        "password": "abc123",
-        "role": "user",
-        "lastLoggedIn": null
-    },
-    {
-        "id": "99cd4ec1-bf8d-456f-8155-ac007453d93b",
-        "email": "navn.navnesen.5@user.com",
-        "password": "Foobar12",
+        "id": "e602d0f4-02e8-465e-9a9d-482ca468c363",
+        "email": "test@auth.no",
+        "password": "$2b$10$ds4RmRi6vEpSHvFGGqGQu.8LwQF/v74V6HbApGkKsZBZH80ZHnN8.",
         "role": "user"
     },
     {
-        "id": "fdd199a5-b0dc-4a84-8d00-ce975900db4a",
-        "email": "navn.navnesen.6@user.com",
-        "password": "Foobar12",
-        "role": "user"
-    },
-    {
-        "id": "1e79090c-90f0-4992-a5d6-cfc83facce8f",
-        "email": "navn.navnesen.7@user.com",
-        "password": "Foobar12",
+        "id": "9a6bcef5-70f8-43eb-b993-c9d9464d3393",
+        "email": "test2@auth.no",
+        "password": "$2b$10$fSBVSERHNzqcsztYxgNuz.uHKf9l.8mSIWt3g3m1x6T2msaNog7Qe",
         "role": "user"
     }
 ]

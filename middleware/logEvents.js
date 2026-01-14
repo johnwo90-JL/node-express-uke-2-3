@@ -2,6 +2,7 @@
 import * as uuid from "uuid";
 import * as datefns from "date-fns";
 import fs from "node:fs";
+import path from "node:path";
 
 //Creates a log if it doesn't exist, and fills it with id, date, and message
 const logEvents = async(message, logName) =>
@@ -14,9 +15,9 @@ const logEvents = async(message, logName) =>
     {
         if(!fs.existsSync(path.join(process.cwd(), "logs")))
         {
-            await fs.promises.mkdir(join(process.cwd(), "logs"));
+            await fs.promises.mkdir(path.join(process.cwd(), "logs"));
         }
-        await fs.promises.appendFile(join(process.cwd(),  "logs", logName), theLog)
+        await fs.promises.appendFile(path.join(process.cwd(),  "logs", logName), theLog)
     }
     catch(err)
     {

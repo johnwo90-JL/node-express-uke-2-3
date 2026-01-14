@@ -1,16 +1,21 @@
 import express from "express";
 import * as userController from "../controllers/users.controller.js";
+import * as bcrypt from "bcrypt";
 
 const userRouter = new express.Router();
 
 userRouter.get("/", (req, res) => {
-    const users = getUsers();
+    const users = userController.getUsers();
 
     res.json(users);
 });
 
 userRouter.post("/", (req, res) => {
     const { body } = req;
+    const { password } = body;
+
+    const hash = bcrypt.hashSync(password, 10);
+    body.password = hash;
 
     const result = userController.createUser(body);
 

@@ -1,19 +1,30 @@
 import express from "express";
 import employeeController from "../controllers/employees.controller";
+import { isAuthenticated } from "../middleware/auth.middleware";
 
 const employeesRouter = new express.Router();
 
 // Liste over ansatte
-employeesRouter.get("/", (_, res) => {
+employeesRouter.get("/", isAuthenticated(["admin"]), (req, res) => {
     const employees = employeeController.getEmployees();
+
+    console.log("Request, userId from token:", req.payload.user.id);
 
     res.json(employees);
 });
 
 
 // Hent én spesifikk ansatt
-employeesRouter.get("/:id", (req, res) => {
+employeesRouter.get("/:id", isAuthenticated(["user"]), (req, res) => {
     const { id } = req.params;
+
+    if (id !== req.payload.user.id) {
+        if (req.payload.role !== "admin") {
+            res.sendStatus(403);
+            return;
+        }
+    }
+
     const employee = employeeController.getEmployeeById(id);
 
     res.json(employee);
