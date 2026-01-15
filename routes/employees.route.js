@@ -1,5 +1,5 @@
 import express from "express";
-import employeeController from "../controllers/employees.controller";
+import * as employeeController from "../controllers/employees.controller";
 import { isAuthenticated } from "../middleware/auth.middleware";
 
 const employeesRouter = new express.Router();

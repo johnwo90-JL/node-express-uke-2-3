@@ -1,5 +1,5 @@
 import { User } from "../models/index.js";
-import { userSchema } from "../schema/user.schema.js";
+import { UserSchemaCreate } from "../schema/user.schema.js";
 
 export const getUsers = async () => {
   try {

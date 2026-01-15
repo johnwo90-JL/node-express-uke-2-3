@@ -1,6 +1,6 @@
-import sequelize from "../config/database.js";
-import User from "./User.js";
-import Employee from "./Employee.js";
+import sequelize from "../config/db.config.js";
+import User from "./user.model.js";
+import Employee from "./employee.model.js";
 
 // Define associations
 User.hasOne(Employee, {
