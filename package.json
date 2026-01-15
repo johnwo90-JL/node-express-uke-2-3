@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "start": "node --import=extensionless/register server.js",
-    "dev": "nodemon --exec \"node --import=extensionless/register\" server.js",
-    "db:create": "node --import=extensionless/register sqlite.dev.js",
-    "db:seed": "node --import=extensionless/register ./seedings/150126-db-sqlite-seed.js"
+    "dev": "nodemon --exec \"node --import=extensionless/register\" server.js", 
+    "db:seed": "node --import=extensionless/register ./seedings/150126-db-sqlite-seed.js",
+    "postinstall": "npm run \"db:seed\""
   },
   "author": "",
   "license": "ISC",
