@@ -2,10 +2,14 @@ import express from "express";
 import * as bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { readJsonDB } from "../util";
+import User from "../models/user.model";
 
-function login(email, password) {
-    const users = readJsonDB("users");
-    const user = users.find(e => e.email === email);
+async function login(email, password) {
+    const user = await User.findOne({
+        where: {
+            email
+        }
+    });
 
     console.log(`Comparing password "${password}" with existing hash...`);
     const result = bcrypt.compareSync(password, user.password);

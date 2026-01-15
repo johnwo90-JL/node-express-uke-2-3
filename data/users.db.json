@@ -3,12 +3,12 @@
         "id": "e602d0f4-02e8-465e-9a9d-482ca468c363",
         "email": "test@auth.no",
         "password": "$2b$10$ds4RmRi6vEpSHvFGGqGQu.8LwQF/v74V6HbApGkKsZBZH80ZHnN8.",
-        "role": "user"
+        "role": "admin"
     },
     {
         "id": "9a6bcef5-70f8-43eb-b993-c9d9464d3393",
         "email": "test2@auth.no",
         "password": "$2b$10$fSBVSERHNzqcsztYxgNuz.uHKf9l.8mSIWt3g3m1x6T2msaNog7Qe",
-        "role": "user"
+        "role": "admin"
     }
 ]

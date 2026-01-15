@@ -29,11 +29,11 @@ const authRouter = new express.Router();
 // });
 
 
-authRouter.post("/login", (req, res) => {
+authRouter.post("/login", async (req, res) => {
     const { email, password } = req.body;
     
     try {
-        res.json(login(email, password));
+        res.json(await login(email, password));
     } catch (err) {
         res.sendStatus(401);
         return;

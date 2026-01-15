@@ -1,11 +1,13 @@
 import express from "express";
-import * as userController from "../controllers/users.controller.js";
+import * as userController from "../controllers/users.controller";
 import * as bcrypt from "bcrypt";
 
 const userRouter = new express.Router();
 
-userRouter.get("/", (req, res) => {
-    const users = userController.getUsers();
+userRouter.get("/", async (req, res) => {
+    const users = await userController.getUsers();
+
+    console.log("GET /users", users)
 
     res.json(users);
 });

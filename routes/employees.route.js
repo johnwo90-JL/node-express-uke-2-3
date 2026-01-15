@@ -5,10 +5,10 @@ import { isAuthenticated } from "../middleware/auth.middleware";
 const employeesRouter = new express.Router();
 
 // Liste over ansatte
-employeesRouter.get("/", isAuthenticated(["admin"]), (req, res) => {
-    const employees = employeeController.getEmployees();
+employeesRouter.get("/", isAuthenticated(["admin"]), async (req, res) => {
+    const employees = await employeeController.getEmployees();
 
-    console.log("Request, userId from token:", req.payload.user.id);
+    console.log(employees); 
 
     res.json(employees);
 });
@@ -82,6 +82,8 @@ employeesRouter.use((err, req, res, next) => {
     if (req.headersSent) {
         return;
     }
+
+    console.log("employeesRouter-Error:", err);
 
     res.status(err.cause).json({ success: false, error: err });
 });

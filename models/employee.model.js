@@ -63,16 +63,16 @@ const Employee = sequelize.define("Employee", {
   },
 
   // Optional: Link employee to user account
-  userId: {
-    type: DataTypes.UUID,
-    allowNull: true,
-    references: {
-      model: "users",
-      key: "id"
-    },
-    onUpdate: "CASCADE",
-    onDelete: "SET NULL"
-  }
+  // userId: {
+  //   type: DataTypes.UUID,
+  //   allowNull: true,
+  //   references: {
+  //     model: "users",
+  //     key: "id"
+  //   },
+  //   onUpdate: "CASCADE",
+  //   onDelete: "SET NULL"
+  // }
 }, {
   tableName: "employees",
   timestamps: true,
@@ -82,9 +82,9 @@ const Employee = sequelize.define("Employee", {
     {
       fields: ["lastname", "firstname"]
     },
-    {
-      fields: ["userId"]
-    }
+    // {
+    //   fields: ["userId"]
+    // }
   ]
 });
 

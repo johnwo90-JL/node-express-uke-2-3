@@ -6,6 +6,9 @@ export const getUsers = async () => {
     const users = await User.findAll({
       attributes: { exclude: ["password"] } // Never return passwords
     });
+    
+    console.log(users);
+
     return users;
   } catch (error) {
     console.error("Error fetching users:", error);
