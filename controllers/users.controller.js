@@ -1,101 +1,88 @@
-import { UserSchemaCreate, UserSchemaUpdate } from "../schema/user.schema";
-import { readJsonDB, writeJsonDB } from "../util";
+import { User } from "../models/index.js";
+import { userSchema } from "../schema/user.schema.js";
 
-
-// Hent ut alle ansatte fra DB (JSON)
-function getUsers() {
-    const users = readJsonDB("users");
-
+export const getUsers = async () => {
+  try {
+    const users = await User.findAll({
+      attributes: { exclude: ["password"] } // Never return passwords
+    });
     return users;
-}
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    throw new Error("Failed to fetch users");
+  }
+};
 
+export const getUserById = async (id) => {
+  try {
+    const user = await User.findByPk(id, {
+      attributes: { exclude: ["password"] }
+    });
 
-function getUserById(id) {
-    const users = readJsonDB("users");
-    const index = users.map(e => e.id).indexOf(id);
-    
-    if (index === -1) {
-        throw new Error(`User with id ${id} doesn't exist!`, { cause: 404 });
+    if (!user) {
+      throw new Error("User not found");
     }
 
-    return users[index];
-}
+    return user;
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    throw error;
+  }
+};
 
+export const createUser = async (userData) => {
+  try {
+    const validatedData = userSchema.parse(userData);
+    const user = await User.create(validatedData);
 
-function createUser(userData) {
-    delete userData.id;
-    
-    try {
-        const validUserData = UserSchemaCreate.parse(userData);
-        const users = readJsonDB("users");
+    return user.toJSON();
+  } catch (error) {
+    switch(error.name) {
+        case "SequelizeValidationError":
+            throw new Error("Email already exists");
+        case "SequelizeUniqueConstraintError":
+            throw new Error(error.errors.map(e => e.message).join(", "));
+        default:
+            console.error("Error creating user:", error);
+            throw new Error("Failed to create user");
+    }
+  }
+};
 
-        userExists(userData.email);
+export const updateUser = async (id, updateData) => {
+  try {
+    const user = await User.findByPk(id);
 
-        users.push(validUserData);
-        
-        writeJsonDB("users", users);
-    
-        return { success: true, _created: validUserData };
-    } catch (err) {
-        if (err.cause) {
-            throw err;
-        }
-        
-        console.error(err);
-        throw new Error("Invalid user data.", { cause: 400 });
+    if (!user) {
+      throw new Error("User not found");
     }
 
-}
+    // Update user (password will be auto-hashed if changed)
+    await user.update(updateData);
 
+    return user.toJSON();
+  } catch (error) {
+    if (error.name === "SequelizeValidationError") {
+      throw new Error(error.errors.map(e => e.message).join(", "));
+    }
+    console.error("Error updating user:", error);
+    throw new Error("Failed to update user");
+  }
+};
 
-function updateUser(id, data) {
-    UserSchemaUpdate.parse(data);
-    
-    const users = readJsonDB("users");
-    const index = users.map(e => e.id).indexOf(id);
+export const deleteUser = async (id) => {
+  try {
+    const user = await User.findByPk(id);
 
-    if (index === -1) {
-        throw new Error(`User with id ${id} doesn't exist!`, { cause: 404 });
+    if (!user) {
+      throw new Error("User not found");
     }
 
-    const _old = { ...users[index] };
-    const user = { ...users[index], ...data };
-    users[index] = user;
+    await user.destroy();
 
-    writeJsonDB("users", users);
-
-    return { success: true, _updated: user, _old };
-}
-
-
-function deleteUser(id) {
-    const users = readJsonDB("users");
-    const index = users.map(e => e.id).indexOf(id);
-
-    if (index === -1) { // Eksisterer ikke, send 404
-        throw new Error(`User with id ${id} doesn't exist!`, { cause: 404 });
-    }
-
-    users.splice(index, 1);
-
-    writeJsonDB("users", users);
-
-    return { success: true, status: 204, _deletedId: id };
-}
-
-
-function userExists(email) {
-    const users = readJsonDB("users");
-    if (users.find(e => e.email === email)) {
-        throw new Error("User already exists.", { cause: 409 });
-    }
-}
-
-
-export {
-    getUsers,
-    getUserById,
-    createUser,
-    updateUser,
-    deleteUser
+    return { success: true, message: "User deleted successfully" };
+  } catch (error) {
+    console.error("Error deleting user:", error);
+    throw new Error("Failed to delete user");
+  }
 };

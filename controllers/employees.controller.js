@@ -1,119 +1,106 @@
-import { readJsonDB, writeJsonDB } from "../util";
-import * as uuid from "uuid";
+import { Employee, User } from "../models/index.js";
 
-
-// Hent ut alle ansatte fra DB (JSON)
-function getEmployees() {
-    const employees = readJsonDB("employees");
-
+export const getEmployees = async () => {
+  try {
+    const employees = await Employee.findAll({
+      include: [{
+        model: User,
+        as: "userAccount",
+        attributes: ["id", "email", "role"]
+      }],
+      order: [["lastname", "ASC"], ["firstname", "ASC"]]
+    });
     return employees;
-}
+  } catch (error) {
+    console.error("Error fetching employees:", error);
+    throw new Error("Failed to fetch employees");
+  }
+};
 
-// Hent ut én ansatt fra DB (JSON)
-function getEmployeeById(id) {
-    const employees = readJsonDB("employees");
-    const index = employees.map(e => e.id).indexOf(id);
-    
-    if (index === -1) {
-        throw new Error(`Employee with id ${id} doesn't exist!`, { cause: 404 });
+export const getEmployeeById = async (id) => {
+  try {
+    const employee = await Employee.findByPk(id, {
+      include: [{
+        model: User,
+        as: "userAccount",
+        attributes: ["id", "email", "role"]
+      }]
+    });
+
+    if (!employee) {
+      throw new Error("Employee not found");
     }
 
-    return employees[index];
-}
+    return employee;
+  } catch (error) {
+    console.error("Error fetching employee:", error);
+    throw error;
+  }
+};
 
-// Opprett en ansatt
-function createEmployee(employeeData) {
-    delete employeeData.id;
-    
-    // ... inndatavalidering ...
+export const createEmployee = async (employeeData) => {
+  try {
+    const employee = await Employee.create(employeeData);
+    return employee;
+  } catch (error) {
+    if (error.name === "SequelizeValidationError") {
+      throw new Error(error.errors.map(e => e.message).join(", "));
+    }
+    console.error("Error creating employee:", error);
+    throw new Error("Failed to create employee");
+  }
+};
 
-    const employees = readJsonDB("employees");
-    
-    employeeData.id = uuid();
-    employees.push(employeeData);
-    
-    writeJsonDB("employees", employees);
+export const updateEmployee = async (id, updateData) => {
+  try {
+    const employee = await Employee.findByPk(id);
 
-    return { success: true, _inserted: employeeData };
-}
-
-// Update / PATCH
-function updateEmployee(id, updatedEmployeeData) {
-    const employees = readJsonDB("employees");
-    const index = employees.map(e => e.id).indexOf(id);
-
-    if (index === -1) {
-        throw new Error(`Employee with id ${id} doesn't exist!`, { cause: 404 });
+    if (!employee) {
+      throw new Error("Employee not found");
     }
 
-    // ... Inndatavalidering ...
+    await employee.update(updateData);
+    return employee;
+  } catch (error) {
+    if (error.name === "SequelizeValidationError") {
+      throw new Error(error.errors.map(e => e.message).join(", "));
+    }
+    console.error("Error updating employee:", error);
+    throw new Error("Failed to update employee");
+  }
+};
 
-    delete updatedEmployeeData.id;
+export const upsertEmployee = async (id, employeeData) => {
+  try {
+    const [employee, created] = await Employee.upsert({
+      id,
+      ...employeeData
+    }, {
+      returning: true
+    });
 
-    const _old = { ...employees[index] };
-    const employee = { ...employees[index], ...updatedEmployeeData };
-    employees[index] = employee;
+    return {
+      employee,
+      created // true if inserted, false if updated
+    };
+  } catch (error) {
+    console.error("Error upserting employee:", error);
+    throw new Error("Failed to upsert employee");
+  }
+};
 
-    writeJsonDB("employees", employees);
+export const deleteEmployee = async (id) => {
+  try {
+    const employee = await Employee.findByPk(id);
 
-    return { success: true, _updated: employee, _old };
-}
-
-// Upsert (update & insert) / PUT
-function upsertEmployee(id, upsertedEmployeeData) {
-    const employees = readJsonDB("employees");
-    const index = employees.map(e => e.id).indexOf(id);
-    
-    // ... Inndatavalidering ... 
-
-    if (upsertedEmployeeData.id && id !== upsertedEmployeeData.id) {
-        throw new Error(`id parameter doesn't match id of body: ${id} !== ${upsertedEmployeeData.id}`, { cause: 400 });
+    if (!employee) {
+      throw new Error("Employee not found");
     }
 
-    if (index === -1) { // Eksisterer ikke, så vi setter inn den nye dataen i DB
-        if (!upsertedEmployeeData.id) {
-            throw new Error(`id parameter missing from body!`);
-        }
-
-        employees.push(upsertedEmployeeData);
-        writeJsonDB("employees", employees);
-        return { success: true, status: 201, _inserted: upsertedEmployeeData };
-    }
-    
-    // Ansatt eksisterer, så vi oppdaterer dataen
-
-    delete upsertedEmployeeData.id;
-    
-    const employee = { ...employees[index], ...upsertedEmployeeData };
-    employees[index] = employee;
-
-    writeJsonDB("employees", employees);
-
-    return { success: true, status: 200, _updated: { id, ...upsertedEmployeeData} };
-}
-
-// DELETE
-function deleteEmployee(id) {
-    const employees = readJsonDB("employees");
-    const index = employees.map(e => e.id).indexOf(id);
-
-    if (index === -1) { // Eksisterer ikke, send 404
-        throw new Error(`Employee with id ${id} doesn't exist!`, { cause: 404 });
-    }
-
-    employees.splice(index, 1);
-
-    writeJsonDB("employees", employees);
-
-    return { success: true, status: 204, _deletedId: id };
-}
-
-
-export default {
-    getEmployees,
-    getEmployeeById,
-    createEmployee,
-    updateEmployee,
-    upsertEmployee,
-    deleteEmployee
+    await employee.destroy();
+    return { success: true, message: "Employee deleted successfully" };
+  } catch (error) {
+    console.error("Error deleting employee:", error);
+    throw new Error("Failed to delete employee");
+  }
 };
