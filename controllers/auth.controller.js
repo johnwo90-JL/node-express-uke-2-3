@@ -3,6 +3,7 @@ import * as bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { readJsonDB } from "../util";
 import User from "../models/user.model";
+import { config } from "../config/env.config";
 
 async function login(email, password) {
     const user = await User.findOne({
@@ -25,17 +26,17 @@ async function login(email, password) {
         user: {
             id: user.id
         }
-    }, "foobar12", {
-        expiresIn: "3h"
+    }, config.jwt.secret, {
+        expiresIn: config.jwt.accessExpiration
     }); // .env, miljøvarabeldefinisjonsfil
 
-    const refreshToken = jwt.sign({}, "foobar12", { expiresIn: "7d" }); // .env, miljøvarabeldefinisjonsfil
+    const refreshToken = jwt.sign({}, config.jwt.secret, { expiresIn: config.jwt.refreshExpiration }); // .env, miljøvarabeldefinisjonsfil
 
     return { success: true, accessToken, refreshToken };
 }
 
 function verifyToken(token) {
-    return jwt.verify(token, "foobar12");
+    return jwt.verify(token, config.jwt.secret);
 }
 
 export { login, verifyToken };

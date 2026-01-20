@@ -35,19 +35,19 @@ export const getUserById = async (id) => {
 
 export const createUser = async (userData) => {
   try {
-    const validatedData = userSchema.parse(userData);
+    const validatedData = UserSchemaCreate.parse(userData);
     const user = await User.create(validatedData);
 
     return user.toJSON();
   } catch (error) {
     switch(error.name) {
         case "SequelizeValidationError":
-            throw new Error("Email already exists");
+            throw new Error("Bad Request", { cause: 400 });
         case "SequelizeUniqueConstraintError":
-            throw new Error(error.errors.map(e => e.message).join(", "));
+            throw new Error(error.errors.map(e => e.message).join(", "), { cause: 409 });
         default:
             console.error("Error creating user:", error);
-            throw new Error("Failed to create user");
+            throw new Error("Failed to create user", { cause: 400 });
     }
   }
 };

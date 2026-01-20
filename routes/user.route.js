@@ -1,10 +1,11 @@
 import express from "express";
 import * as userController from "../controllers/users.controller";
 import * as bcrypt from "bcrypt";
+import { isAuthenticated } from "../middleware/auth.middleware";
 
 const userRouter = new express.Router();
 
-userRouter.get("/", async (req, res) => {
+userRouter.get("/", isAuthenticated(["admin"]), async (req, res) => {
     const users = await userController.getUsers();
 
     console.log("GET /users", users)
@@ -12,14 +13,24 @@ userRouter.get("/", async (req, res) => {
     res.json(users);
 });
 
-userRouter.post("/", (req, res) => {
+userRouter.get("/:id", isAuthenticated(["admin", "self"]), async (req, res) => {
+    // Inndatavalidering !!
+
+    const user = await userController.getUserById(req.params?.id);
+
+    console.log(`GET /users/${req.params?.id}`, user);
+
+    res.json(user);
+});
+
+userRouter.post("/", async (req, res) => {
     const { body } = req;
     const { password } = body;
 
     const hash = bcrypt.hashSync(password, 10);
     body.password = hash;
 
-    const result = userController.createUser(body);
+    const result = await userController.createUser(body);
 
     res.json(result);
 });
@@ -58,7 +69,13 @@ userRouter.use((err, req, res, next) => {
         }
     } catch (err) { }
 
-    res.status(err.cause).json({ success: false, error: err.message });
+    if (/(jwt)|(token)/i.test(err.name)) {
+        console.log("JWT/Token error");
+        res.status(401).json({ success: false });
+        return;
+    }
+
+    res.status(err?.cause ?? 400).json({ success: false, error: err });
 })
 
 export { userRouter };

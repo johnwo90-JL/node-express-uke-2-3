@@ -30,7 +30,7 @@ const authRouter = new express.Router();
 
 
 authRouter.post("/login", async (req, res) => {
-    const { email, password } = req.body;
+    const { email, password } = req.body; // !TODO inndatavalidering
     
     try {
         res.json(await login(email, password));

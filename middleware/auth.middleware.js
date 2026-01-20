@@ -2,10 +2,7 @@ import { verifyToken } from "../controllers/auth.controller";
 
 export function isAuthenticated(validRoles = ["user"]) {
     // validRoles: ["admin", "user", "self"]
-
     return (req, res, next) => {
-        console.log("Headers",req.headers["authorization"]);
-
         if (!req.headers["authorization"]) {
             res.sendStatus(401);
             return;
@@ -13,15 +10,26 @@ export function isAuthenticated(validRoles = ["user"]) {
 
         const payload = verifyToken(req.headers["authorization"].split(" ")[1]);
 
-        // Check "self" X
-
-        // Check "admin"3
+        
+        // Check "admin"
+        console.log(validRoles);
         if (validRoles.includes("admin") && payload.role !== "admin") {
-            res.sendStatus(403);
-            return;
+            // "Admin"-role required
+            if (!validRoles.includes("self")) {
+                res.sendStatus(403);
+                return;
+            }
+            
+            console.log("Not admin, checking \"self\"");
+            
+            // Check "self"
+            if (payload?.user?.id !== req.params?.id) {
+                res.sendStatus(403);
+                return;
+            }
         }
 
-        // Check/default "user"
+        // Check/default "user" – Default case
 
         req.payload = payload;
 
