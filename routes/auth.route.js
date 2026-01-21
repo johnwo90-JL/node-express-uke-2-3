@@ -1,37 +1,38 @@
 import express from "express";
-import * as bcrypt from "bcrypt";
+import { generateTokenPair, login, verifyRefreshToken } from "../controllers/auth.controller";
+import RefreshToken from "../models/refresh-token.model";
+import { AuthSchemaLogin } from "../schema/auth.schema";
 import jwt from "jsonwebtoken";
-import { readJsonDB } from "../util";
-import { login } from "../controllers/auth.controller";
 
 const authRouter = new express.Router();
 
-// authRouter.get("/verify/:id", (req, res) => {
-//     const { password } = req.body;
-//     const { id } = req.params;
+authRouter.get("/refresh/:token", async (req, res) => {
+    const { token } = req.params;
 
-//     const users = readJsonDB("users");
-
-//     const user = users.find(e => e.id === id);
-
-//     console.log(`Comparing password "${password}" with existing hash...`);
-//     const result = bcrypt.compareSync(password, user.password);
-//     console.log("Result:",result);
-
-//     const accessToken = jwt.sign({
-//         role: user.role,
-//         user: {
-//             id
-//         }
-//     }, "foobar12"); // .env, miljøvarabeldefinisjonsfil
-
-//     res.json(accessToken);
-// });
+    try {
+        await verifyRefreshToken(token);
+        const payloadRefreshToken = jwt.decode(token);
+        console.log("token",payloadRefreshToken);
+        res.status(200).json({success: true, ...(await generateTokenPair(payloadRefreshToken))});
+    } catch (err) {
+        console.error(err);
+        res.sendStatus(err?.cause ?? 401);
+        return;
+    }
+});
 
 
 authRouter.post("/login", async (req, res) => {
-    const { email, password } = req.body; // !TODO inndatavalidering
-    
+    try {
+        AuthSchemaLogin.parse(req.body);
+    } catch (err) {
+        res.sendStatus(400);
+        console.error(err);
+        return;
+    }
+
+    const { email, password } = req.body;
+        
     try {
         res.json(await login(email, password));
     } catch (err) {

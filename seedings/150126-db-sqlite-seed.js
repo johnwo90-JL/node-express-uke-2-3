@@ -2,11 +2,16 @@
 
 import { testConnection, syncDatabase } from "../config/db.config";
 import Employee from "../models/employee.model";
+import RefreshToken from "../models/refresh-token.model";
 import User from "../models/user.model";
 
 
 testConnection().then(() => {
     syncDatabase();
+
+    RefreshToken.create({ token: null })
+        .then(res => console.log("DB Seeded:", res))
+        .catch(err => console.log("Error seeding DB:", err));
 
     // Employee.create({
     //     firstname: ["John", "Jane", "Foo", "Bar"][Math.floor(Math.random()*4)],

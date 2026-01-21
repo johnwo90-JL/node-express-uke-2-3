@@ -13,6 +13,8 @@ const sequelize = new Sequelize(
     port: database.port,
     dialect: database.dialect,
     storage: database.storage, // Only for SQLite
+    foreignKeys: true, // Only for SQLite
+    
 
     // Logging
     logging: config.env === "development" ? console.log : false,
@@ -47,6 +49,7 @@ export const testConnection = async () => {
 // !! *could* be UNSAFE for production
 export const syncDatabase = async (options = {}) => {
   try {
+    
     await sequelize.sync(options);
     console.log("All models synced!");
   } catch (error) {

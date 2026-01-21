@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
 import bcrypt from "bcrypt";
 import sequelize from "../config/db.config.js";
+import RefreshToken from "./refresh-token.model.js";
 
 
 const User = sequelize.define("User", {
@@ -12,7 +13,7 @@ const User = sequelize.define("User", {
   },
 
   email: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
     allowNull: false,
     unique: true,
     validate: {
@@ -43,7 +44,7 @@ const User = sequelize.define("User", {
     type: DataTypes.ENUM("user", "admin"),
     defaultValue: "user",
     allowNull: false
-  }
+  },
 }, {
   tableName: "users",
   timestamps: true,
@@ -73,5 +74,7 @@ User.prototype.toJSON = function() {
   delete values.password; // Never expose password in API responses
   return values;
 };
+
+
 
 export default User;
