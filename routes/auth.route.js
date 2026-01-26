@@ -4,6 +4,7 @@ import RefreshToken from "../models/refresh-token.model";
 import { AuthSchemaLogin } from "../schema/auth.schema";
 import jwt from "jsonwebtoken";
 import { config } from "../config/env.config";
+import { useValidate } from "../middleware/useValidate.middleware";
 
 const authRouter = new express.Router();
 
@@ -40,15 +41,7 @@ const handleRefreshToken = async (req, res) => {
 authRouter.get("/refresh", handleRefreshToken);
 authRouter.get("/refresh/:token", handleRefreshToken);
 
-authRouter.post("/login", async (req, res) => {
-    try {
-        AuthSchemaLogin.parse(req.body);
-    } catch (err) {
-        res.sendStatus(400);
-        console.error(err);
-        return;
-    }
-
+authRouter.post("/login", useValidate({ bodySchema: AuthSchemaLogin }), async (req, res) => {
     const { email, password } = req.body;
         
     try {

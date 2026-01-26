@@ -2,6 +2,8 @@ import express from "express";
 import * as userController from "../controllers/users.controller";
 import * as bcrypt from "bcrypt";
 import { isAuthenticated } from "../middleware/isAuthenticated.middleware";
+import { useValidate } from "../middleware/useValidate.middleware";
+import { UserSchemaCreate } from "../schema/user.schema";
 
 const userRouter = new express.Router();
 
@@ -23,7 +25,7 @@ userRouter.get("/:id", isAuthenticated(["admin", "self"]), async (req, res) => {
     res.json(user);
 });
 
-userRouter.post("/", async (req, res) => {
+userRouter.post("/", isAuthenticated(["admin"]), useValidate({ bodySchema: UserSchemaCreate }), async (req, res) => {
     const { body } = req;
     const { password } = body;
 

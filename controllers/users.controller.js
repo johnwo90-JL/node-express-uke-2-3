@@ -35,8 +35,8 @@ export const getUserById = async (id) => {
 
 export const createUser = async (userData) => {
   try {
-    const validatedData = UserSchemaCreate.parse(userData);
-    const user = await User.create(validatedData);
+    // const validatedData = UserSchemaCreate.parse(userData);
+    const user = await User.create(userData);
 
     return user.toJSON();
   } catch (error) {
