@@ -7,11 +7,6 @@ import { config } from "../config/env.config";
 import RefreshToken from "../models/refresh-token.model";
 
 function generateTokenPair(user) {
-    // if (!user.role) {
-    //     const tempUser = await User.findByPk(user.id);
-    //     user.role = tempUser.role;
-    // }
-
     const accessToken = jwt.sign({
         id: user.id,
         role: "user",
@@ -39,27 +34,19 @@ async function login(email, password) {
     const result = bcrypt.compareSync(password, user.password);
     console.log("Result:",result);
 
-    // if (!result) {
-    //     res.status(401).json({ success: false, error: "Invalid credentials." });
-    //     console.error("Invalid credentials")
-    //     throw new Error("Invalid credentials.");
-    // }
+    if (!result) {
+        console.error("Invalid credentials")
+        throw new Error("Invalid credentials.", { cause: 401 });
+    }
 
     const tokens = generateTokenPair(user);
+    
     try {
-    
-        console.log("Generated tokens:", ...tokens);
+        await RefreshToken.upsert({ userId: user.id, token: tokens.refreshToken });
+    } catch (err) {
+        console.error(err);
+        throw new Error("Internal error", { cause: 500 });
     }
-    catch (err) {
-        
-    }
-    
-    // try {
-    //     // await RefreshToken.upsert({ userId: user.id, token: refreshToken });
-    // } catch (err) {
-    //     console.error(err);
-    //     return { success: false, err};
-    // }
     
     return { success: true, ...tokens };
 }

@@ -3,24 +3,42 @@ import { generateTokenPair, login, verifyRefreshToken } from "../controllers/aut
 import RefreshToken from "../models/refresh-token.model";
 import { AuthSchemaLogin } from "../schema/auth.schema";
 import jwt from "jsonwebtoken";
+import { config } from "../config/env.config";
 
 const authRouter = new express.Router();
 
-authRouter.get("/refresh/:token", async (req, res) => {
+
+const handleRefreshToken = async (req, res) => {
     const { token } = req.params;
 
+    const headerRefreshToken = req.cookies.refreshToken;
+
+    const actualToken = token || headerRefreshToken || null;
+
+    console.log("Token:",actualToken);
+
+    if (actualToken === null) {
+        throw new Error("Bad request", { cause: 400 });
+    }
+
     try {
-        await verifyRefreshToken(token);
-        const payloadRefreshToken = jwt.decode(token);
-        console.log("token",payloadRefreshToken);
-        res.status(200).json({success: true, ...(await generateTokenPair(payloadRefreshToken))});
+        await verifyRefreshToken(actualToken);
+        const payloadRefreshToken = jwt.decode(actualToken);
+
+        
+        const tokens = generateTokenPair(payloadRefreshToken);
+
+        res.cookie("refreshToken", tokens.refreshToken);
+        res.status(200).json({success: true, ...tokens});
     } catch (err) {
         console.error(err);
         res.sendStatus(err?.cause ?? 401);
         return;
     }
-});
+};
 
+authRouter.get("/refresh", handleRefreshToken);
+authRouter.get("/refresh/:token", handleRefreshToken);
 
 authRouter.post("/login", async (req, res) => {
     try {
@@ -35,11 +53,17 @@ authRouter.post("/login", async (req, res) => {
         
     try {
         const result = await login(email, password);
-        console.log(result);
+
+        res.cookie("refreshToken", result.refreshToken, {
+            maxAge: 7*24*60*60*1000,
+            httpOnly: true,
+            secure: config.env !== "development"
+        });
+        
         res.json(result);
     } catch (err) {
         console.log(err);
-        res.sendStatus(503);
+        res.sendStatus(err.cause ?? 401);
         return;
     }
 });

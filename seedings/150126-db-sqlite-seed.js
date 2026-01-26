@@ -34,12 +34,12 @@ testConnection().then(() => {
     .catch(err => console.log("Error seeding DB:", err));
     
     User.create({
-            "email": "test@auth.no",
-            "password": "abc123",
-            "role": "admin"
-        })
-        .then(res => console.log("DB Seeded:", res))
-        .catch(err => console.log("Error seeding DB:", err));
+        "email": "test@auth.no",
+        "password": "abc123",
+        "role": "admin"
+    })
+    .then(res => console.log("DB Seeded:", res))
+    .catch(err => console.log("Error seeding DB:", err));
 
 }).catch(err => process.exit(1));
 

@@ -1,7 +1,7 @@
 import express from "express";
 import * as userController from "../controllers/users.controller";
 import * as bcrypt from "bcrypt";
-import { isAuthenticated } from "../middleware/auth.middleware";
+import { isAuthenticated } from "../middleware/isAuthenticated.middleware";
 
 const userRouter = new express.Router();
 
