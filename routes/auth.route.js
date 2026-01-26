@@ -34,9 +34,12 @@ authRouter.post("/login", async (req, res) => {
     const { email, password } = req.body;
         
     try {
-        res.json(await login(email, password));
+        const result = await login(email, password);
+        console.log(result);
+        res.json(result);
     } catch (err) {
-        res.sendStatus(401);
+        console.log(err);
+        res.sendStatus(503);
         return;
     }
 });

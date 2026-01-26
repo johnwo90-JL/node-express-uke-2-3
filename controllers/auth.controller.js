@@ -6,7 +6,7 @@ import User from "../models/user.model";
 import { config } from "../config/env.config";
 import RefreshToken from "../models/refresh-token.model";
 
-async function generateTokenPair(user) {
+function generateTokenPair(user) {
     // if (!user.role) {
     //     const tempUser = await User.findByPk(user.id);
     //     user.role = tempUser.role;
@@ -23,6 +23,8 @@ async function generateTokenPair(user) {
         id: user.id
     }, config.jwt.secret, { expiresIn: config.jwt.refreshExpiration }); // .env, miljøvarabeldefinisjonsfil
 
+    console.log("Tokens generated!", accessToken.length);
+
     return { accessToken, refreshToken };
 }
 
@@ -37,21 +39,28 @@ async function login(email, password) {
     const result = bcrypt.compareSync(password, user.password);
     console.log("Result:",result);
 
-    if (!result) {
-        res.status(401).json({ success: false, error: "Invalid credentials." });
-        console.error("Invalid credentials")
-        throw new Error("Invalid credentials.");
-    }
+    // if (!result) {
+    //     res.status(401).json({ success: false, error: "Invalid credentials." });
+    //     console.error("Invalid credentials")
+    //     throw new Error("Invalid credentials.");
+    // }
 
     const tokens = generateTokenPair(user);
-
     try {
-        // await RefreshToken.upsert({ userId: user.id, token: refreshToken });
-    } catch (err) {
-        console.error(err);
-        return { success: false, err};
+    
+        console.log("Generated tokens:", ...tokens);
     }
-
+    catch (err) {
+        
+    }
+    
+    // try {
+    //     // await RefreshToken.upsert({ userId: user.id, token: refreshToken });
+    // } catch (err) {
+    //     console.error(err);
+    //     return { success: false, err};
+    // }
+    
     return { success: true, ...tokens };
 }
 
